@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lectura interactiva | Adaptación, mutación y tiempo geológico</title>
+  <style>
+    :root{--green:#183942;--yellow:#f5be10;--orange:#d96017;--ink:#17313a;--paper:#fffaf0;--white:#fff;--line:#d9e6dd;--mint:#dff4e8;--sky:#dff3ff;--peach:#ffe3d4;--shadow:0 18px 48px rgba(24,57,66,.15)}
+    *{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;color:var(--ink);background:linear-gradient(180deg,#f7fff8,#fff7df 55%,#edf8f3);letter-spacing:0}button{font:inherit}p{line-height:1.55}h1{font-size:clamp(34px,5vw,64px);line-height:1;margin:0;color:var(--green)}h2{font-size:clamp(26px,4vw,44px);line-height:1.06;margin:0 0 12px;color:var(--green)}h3{margin:0 0 8px;color:var(--green);font-size:22px}
+    .topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px clamp(14px,3vw,28px);background:rgba(255,255,255,.94);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:10;backdrop-filter:blur(10px)}.brand{display:flex;align-items:center;gap:12px;min-width:0}.brand img{width:min(180px,42vw);height:auto}.course{font-weight:800;color:var(--green);text-align:right}
+    main{max-width:1180px;margin:0 auto;padding:18px clamp(12px,3vw,28px) 36px}.reader{background:white;border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow);overflow:hidden;position:relative}.slide{display:none;min-height:540px;padding:clamp(20px,4vw,42px)}.slide.active{display:grid;grid-template-columns:minmax(0,1fr) minmax(280px,.92fr);gap:24px;align-items:center}.slide.full.active{display:block}.tag{display:inline-flex;background:var(--green);color:#fff;border-radius:999px;padding:8px 12px;font-weight:900;font-size:14px;margin-bottom:14px}
+    .photo{position:relative;min-height:310px;border-radius:22px;overflow:hidden;border:2px solid var(--line);box-shadow:var(--shadow);background:#fff}.photo img.main-img{width:100%;height:100%;min-height:310px;object-fit:cover;display:block}.photo.contain img.main-img{object-fit:contain;background:#fff8df}.caption{position:absolute;left:14px;bottom:14px;background:rgba(24,57,66,.92);color:white;border-radius:12px;padding:9px 12px;font-weight:900}.owl{position:absolute;right:12px;bottom:10px;width:min(110px,24%);filter:drop-shadow(0 12px 16px rgba(24,57,66,.22))}.solo-owl{max-width:160px;filter:drop-shadow(0 12px 16px rgba(24,57,66,.22));animation:float 4s ease-in-out infinite}
+    .grid2,.grid3,.grid4{display:grid;gap:14px}.grid2{grid-template-columns:repeat(2,minmax(0,1fr))}.grid3{grid-template-columns:repeat(3,minmax(0,1fr))}.grid4{grid-template-columns:repeat(4,minmax(0,1fr))}.card,.touch,.choice{border:2px solid rgba(24,57,66,.15);border-radius:18px;padding:16px;background:linear-gradient(145deg,#fff4ba,#fff);box-shadow:0 14px 30px rgba(24,57,66,.11),inset 0 0 0 1px rgba(255,255,255,.75);color:var(--green)}.touch,.choice{cursor:pointer;text-align:left;font-weight:800;min-height:108px}.touch:nth-child(2n),.choice:nth-child(2n),.card:nth-child(2n){background:linear-gradient(145deg,#c9f2dd,#fff)}.touch:nth-child(3n),.choice:nth-child(3n),.card:nth-child(3n){background:linear-gradient(145deg,#ffd9c8,#fff)}.touch:nth-child(4n),.card:nth-child(4n){background:linear-gradient(145deg,#dff3ff,#fff)}.touch:hover,.choice:hover{transform:translateY(-2px)}.touch.on,.choice.selected{outline:4px solid rgba(217,96,23,.32);border-color:var(--orange)}.touch strong,.choice strong,.card strong{display:block;font-size:22px;margin-bottom:8px}.pill{display:inline-block;margin-top:10px;background:var(--yellow);border-radius:999px;padding:6px 10px;font-weight:900;color:var(--green);font-size:13px}.feedback{margin-top:14px;padding:14px;border-radius:16px;background:#eaf7ef;border:1px solid #b6dfc5;font-weight:800;min-height:54px}.callout{border-left:8px solid var(--yellow);background:#fff6cf;padding:15px;border-radius:16px;margin:14px 0}.note{background:#eef8f2;border:1px solid var(--line);padding:14px;border-radius:16px}
+
+    .mini-gallery{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:16px}
+    .mini-visual{position:relative;min-height:180px;border-radius:18px;overflow:hidden;border:2px solid rgba(24,57,66,.14);box-shadow:0 14px 30px rgba(24,57,66,.11);background:#fff}
+    .mini-visual img{width:100%;height:100%;min-height:180px;object-fit:cover;display:block}
+    .mini-visual.contain img{object-fit:contain;background:#fffaf0}
+    .mini-visual .caption{left:10px;bottom:10px;font-size:13px;padding:7px 10px}
+    .image-note{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(220px,.9fr);gap:16px;align-items:center;margin-top:16px}
+    .soft-frame{border-radius:18px;border:2px solid rgba(24,57,66,.14);background:linear-gradient(145deg,#fff6cf,#eef8f2);padding:14px}
+    .soft-frame img{width:100%;border-radius:14px;display:block;object-fit:cover;max-height:250px}
+
+    .controls{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;border-top:1px solid var(--line);background:#fbfff8}.navbtn{border:0;border-radius:14px;background:var(--green);color:white;font-weight:900;padding:12px 16px;min-height:44px;cursor:pointer}.navbtn:hover{background:#24525d}.navbtn:disabled{opacity:.45;cursor:not-allowed}.dots{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;align-items:center}.dot{width:13px;height:13px;border-radius:50%;border:2px solid var(--green);background:white}.dot.active{background:var(--yellow)}.counter{font-weight:900;color:var(--green);text-align:center;margin-top:5px}
+
+    .touch.flip-ready,.choice.flip-ready{padding:0;border:0;background:transparent;box-shadow:none;perspective:1000px;overflow:visible;min-height:128px}
+    .card-inner{display:grid;min-height:inherit;width:100%;transform-style:preserve-3d;transition:transform .6s ease}
+    .touch.flip-ready.flipped .card-inner,.choice.flip-ready.flipped .card-inner{transform:rotateY(180deg)}
+    .card-face{grid-area:1/1;display:grid;align-content:center;border:2px solid rgba(24,57,66,.15);border-radius:18px;padding:16px;backface-visibility:hidden;box-shadow:0 14px 30px rgba(24,57,66,.11),inset 0 0 0 1px rgba(255,255,255,.75);min-height:128px}
+    .card-front{background:linear-gradient(145deg,#fff4ba,#fff);color:var(--green)}
+    .touch.flip-ready:nth-child(2n) .card-front,.choice.flip-ready:nth-child(2n) .card-front{background:linear-gradient(145deg,#c9f2dd,#fff)}
+    .touch.flip-ready:nth-child(3n) .card-front,.choice.flip-ready:nth-child(3n) .card-front{background:linear-gradient(145deg,#ffd9c8,#fff)}
+    .touch.flip-ready:nth-child(4n) .card-front{background:linear-gradient(145deg,#dff3ff,#fff)}
+    .card-back{transform:rotateY(180deg);background:linear-gradient(145deg,#183942,#2f6a74);color:#fff;font-weight:900;line-height:1.35}
+    .card-back::before{content:"Respuesta";display:inline-block;width:max-content;margin-bottom:8px;background:var(--yellow);color:var(--green);border-radius:999px;padding:5px 9px;font-size:13px}
+    .floating-owl{position:absolute;right:18px;top:18px;width:112px;z-index:3;pointer-events:none;filter:drop-shadow(0 10px 14px rgba(24,57,66,.2));animation:float 4s ease-in-out infinite}@media(max-width:840px){.floating-owl{width:82px;right:12px;top:12px;opacity:.9}}
+    @keyframes float{50%{transform:translateY(-10px)}}@media(max-width:840px){.topbar{align-items:flex-start;flex-direction:column}.course{text-align:left}.slide.active{grid-template-columns:1fr}.grid2,.grid3,.grid4,.mini-gallery,.image-note{grid-template-columns:1fr}.slide{min-height:auto}.photo,.photo img.main-img{min-height:235px}.controls{position:sticky;bottom:0;z-index:4}}
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><img src="html-img-01-cf6f127f7c92.png" alt="Escolaris"><strong>Ciencias Naturales y Tecnología</strong></div>
+    <div class="course">Lección 2 · Lectura interactiva</div>
+  </header>
+  <main>
+    <section class="reader">
+      <img class="floating-owl" src="html-img-02-420c07e21b7c.png" alt="Owlaris científico">
+      <article class="slide">
+        <div>
+          <span class="tag">Explorar · observar · comparar</span>
+          <h1>Adaptación, mutación y tiempo geológico</h1>
+          <p>En esta lectura vas a descubrir cómo algunos rasgos ayudan a los seres vivos y cómo la Tierra ha cambiado durante muchísimo tiempo.</p>
+          <div class="grid3">
+            <button class="touch" data-target="heroInfo" data-info="Un rasgo es una característica: color, forma, tamaño, pico, pelo, patas o conducta."><strong>Rasgo</strong><span class="pill">Tocar</span></button>
+            <button class="touch" data-target="heroInfo" data-info="El ambiente incluye agua, clima, alimento, refugio y otros seres vivos."><strong>Ambiente</strong><span class="pill">Tocar</span></button>
+            <button class="touch" data-target="heroInfo" data-info="La evidencia son pistas que se pueden observar, medir o comparar."><strong>Evidencia</strong><span class="pill">Tocar</span></button>
+          </div>
+          <div class="feedback" id="heroInfo">Toca una tarjeta para descubrir una idea central.</div>
+        </div>
+        <div class="photo"><img class="main-img" src="html-img-03-e456553fd5a6.png" alt="Estudiantes explorando rasgos, fósiles y línea del tiempo"><span class="caption">Observa · compara · explica</span></div>
+      </article>
+      <article class="slide">
+        <div><h2>Meta de aprendizaje</h2><p>Al terminar, podrás explicar la diferencia entre adaptación y mutación, y relacionarlas con cambios de los seres vivos a través del tiempo.</p><div class="callout">Piensa: ¿por qué algunos seres vivos tienen rasgos que parecen ayudarles en su ambiente?</div></div>
+        <div class="photo contain"><img class="main-img" src="html-img-04-6edb451fbf43.png" alt="Modelos de picos, aletas, caparazón y hojas para comparar adaptaciones"><span class="caption">Rasgos para comparar</span></div>
+      </article>
+      <article class="slide full">
+        <h2>Antes de seguir: predice</h2><p>Elige una experiencia cotidiana. No hay una sola respuesta; piensa qué podría estudiar la ciencia.</p>
+        <div class="grid3">
+          <button class="choice" data-target="predictInfo" data-info="Podrías observar si el color ayuda a esconderse o protegerse."><strong>Un insecto se camufla</strong><span class="pill">Tocar</span></button>
+          <button class="choice" data-target="predictInfo" data-info="Podrías comparar si una forma de pico ayuda a comer cierto alimento."><strong>Un ave come semillas</strong><span class="pill">Tocar</span></button>
+          <button class="choice" data-target="predictInfo" data-info="Podrías mirar si un ambiente seco cambia qué plantas sobreviven mejor."><strong>Una planta vive con poca agua</strong><span class="pill">Tocar</span></button>
+        </div>
+        <div class="feedback" id="predictInfo">Toca una experiencia para activar tus ideas.</div>
+        <div class="mini-gallery">
+          <div class="mini-visual"><img src="html-img-05-dd8132884a1e.png" alt="Insecto camuflado sobre hojas observado con lupa"><span class="caption">Camuflaje</span></div>
+          <div class="mini-visual"><img src="html-img-06-aef9e25f35e9.png" alt="Cactus y plantas suculentas como ejemplo de adaptación a poca agua"><span class="caption">Ambiente seco</span></div>
+        </div>
+      </article>
+      <article class="slide">
+        <div><h2>¿Qué es una adaptación?</h2><p>Una adaptación es un rasgo que ayuda a un ser vivo a vivir mejor en su ambiente.</p><div class="callout">Ejemplo: un pico fuerte puede ayudar a romper semillas duras.</div></div>
+        <div class="photo contain"><img class="main-img" src="html-img-04-6edb451fbf43.png" alt="Rasgos de animales y plantas relacionados con adaptación"><span class="caption">Adaptaciones</span></div>
+      </article>
+      <article class="slide full">
+        <h2>Tipos de adaptación</h2><p>Toca cada tarjeta para ver un ejemplo.</p>
+        <div class="grid3">
+          <button class="touch" data-target="adaptInfo" data-info="Forma del cuerpo: patas largas, pico fuerte, pelaje grueso o aletas."><strong>Cuerpo</strong><span class="pill">Tocar</span></button>
+          <button class="touch" data-target="adaptInfo" data-info="Conducta: migrar, buscar sombra o vivir en grupo."><strong>Conducta</strong><span class="pill">Tocar</span></button>
+          <button class="touch" data-target="adaptInfo" data-info="Función: respirar, alimentarse o protegerse de cierta manera."><strong>Función</strong><span class="pill">Tocar</span></button>
+        </div>
+        <div class="feedback" id="adaptInfo">Toca una tarjeta.</div>
+        <div class="image-note">
+          <div class="soft-frame"><strong>Observa la imagen:</strong><p>Algunas adaptaciones se ven en la forma del cuerpo; otras se notan por cómo vive o se protege un ser vivo.</p></div>
+          <div class="soft-frame"><img src="html-img-07-1156f3498db1.png" alt="Modelos de animales, hojas y ADN para comparar rasgos"></div>
+        </div>
+      </article>
+      <article class="slide">
+        <div><h2>¿Qué es una mutación?</h2><p>Una mutación es un cambio en las instrucciones heredadas de un ser vivo.</p><p>No siempre se nota. A veces cambia un rasgo, y su efecto depende del ambiente.</p><div class="callout">Una mutación no es automáticamente buena o mala.</div></div>
+        <div class="photo contain"><img class="main-img" src="html-img-08-bd5163223145.png" alt="Modelo de ADN y hojas con variación natural"><span class="caption">Cambio heredado</span></div>
+      </article>
+      <article class="slide full">
+        <h2>Adaptación o mutación</h2><p>Elige la mejor clasificación. Puedes volver a intentar.</p>
+        <div class="grid2">
+          <button class="choice" data-check="ok" data-box="classInfo"><strong>Pelaje grueso que ayuda en el frío</strong>Adaptación</button>
+          <button class="choice" data-check="no" data-box="classInfo"><strong>Pelaje grueso que ayuda en el frío</strong>Mutación</button>
+          <button class="choice" data-check="no" data-box="classInfo"><strong>Cambio heredado que altera un color</strong>Adaptación</button>
+          <button class="choice" data-check="ok" data-box="classInfo"><strong>Cambio heredado que altera un color</strong>Mutación</button>
+        </div>
+        <div class="feedback" id="classInfo">Selecciona una opción.</div>
+        <div class="mini-gallery">
+          <div class="mini-visual"><img src="html-img-07-1156f3498db1.png" alt="Modelo de ADN junto a rasgos de animales y plantas"><span class="caption">Cambio heredado</span></div>
+          <div class="mini-visual"><img src="html-img-06-aef9e25f35e9.png" alt="Plantas con rasgos que ayudan a vivir con poca agua"><span class="caption">Rasgo útil</span></div>
+        </div>
+      </article>
+      <article class="slide">
+        <div><h2>Tiempo geológico</h2><p>La Tierra tiene una historia larguísima. Para estudiarla, los científicos la organizan en grandes divisiones llamadas eras geológicas.</p><p>Estas divisiones ayudan a ordenar cambios del planeta y de los seres vivos.</p></div>
+        <div class="photo"><img class="main-img" src="html-img-09-95fc6465d659.png" alt="Línea del tiempo geológico con fósiles y seres vivos"><span class="caption">Tiempo geológico</span></div>
+      </article>
+      <article class="slide full">
+        <h2>Ordena la idea</h2><p>Toca la tarjeta que muestra una secuencia lógica.</p>
+        <div class="grid2">
+          <button class="choice" data-check="ok" data-box="timeInfo"><strong>Ambiente cambia → algunos rasgos ayudan → se comparan evidencias</strong><span class="pill">Comprobar</span></button>
+          <button class="choice" data-check="no" data-box="timeInfo"><strong>Primero se sabe todo → después se observan pistas</strong><span class="pill">Comprobar</span></button>
+        </div>
+        <div class="feedback" id="timeInfo">Elige una secuencia.</div>
+      </article>
+      <article class="slide">
+        <div><h2>¿Qué evidencia se puede observar?</h2><p>Para explicar cambios se buscan fósiles, formas del cuerpo, ambientes antiguos y comparaciones entre seres vivos.</p>
+        <div class="grid2"><button class="touch" data-target="eviInfo" data-info="Los fósiles pueden mostrar cómo eran algunos seres vivos antiguos."><strong>Fósiles</strong><span class="pill">Tocar</span></button><button class="touch" data-target="eviInfo" data-info="Comparar rasgos ayuda a pensar qué función podrían tener."><strong>Comparaciones</strong><span class="pill">Tocar</span></button></div><div class="feedback" id="eviInfo">Toca una evidencia.</div></div>
+        <div class="photo"><img class="main-img" src="html-img-09-95fc6465d659.png" alt="Fósiles y línea del tiempo como evidencia"><span class="caption">Evidencias del pasado</span></div>
+      </article>
+      <article class="slide full">
+        <h2>Reto rápido</h2><p>Selecciona la palabra que completa mejor la idea.</p>
+        <div class="callout">Un rasgo que ayuda a un ser vivo a vivir mejor en su ambiente puede ser una...</div>
+        <div class="grid3"><button class="choice" data-check="ok" data-box="quickInfo"><strong>adaptación</strong></button><button class="choice" data-check="no" data-box="quickInfo"><strong>era</strong></button><button class="choice" data-check="no" data-box="quickInfo"><strong>pregunta</strong></button></div>
+        <div class="feedback" id="quickInfo">Elige una palabra.</div>
+        <div class="mini-gallery">
+          <div class="mini-visual"><img src="html-img-05-dd8132884a1e.png" alt="Insecto camuflado entre hojas"><span class="caption">Ejemplo de adaptación</span></div>
+          <div class="mini-visual"><img src="html-img-06-aef9e25f35e9.png" alt="Plantas que conservan agua"><span class="caption">Ambiente y rasgos</span></div>
+        </div>
+      </article>
+      <article class="slide full">
+        <h2>Piensa, no escribas</h2>
+        <p>Reflexiona en silencio: ¿qué ejemplo de la vida diaria te ayuda a entender una adaptación?</p>
+        <div class="image-note">
+          <div>
+            <div class="note"><strong>Importante:</strong> esta reflexión es solo para pensar. No debes escribir nada aquí.</div>
+            <div class="callout">Observa la imagen y piensa: si un ser vivo se parece a su ambiente, ¿cómo podría ayudarle ese rasgo?</div>
+          </div>
+          <div class="soft-frame"><img src="html-img-05-dd8132884a1e.png" alt="Insecto camuflado entre hojas para pensar en adaptación"></div>
+        </div>
+      </article>
+      <article class="slide full">
+        <h2>Conclusión</h2><div class="grid3"><div class="card"><strong>Adaptación</strong><p>Rasgo que ayuda en un ambiente.</p></div><div class="card"><strong>Mutación</strong><p>Cambio heredado que puede afectar un rasgo.</p></div><div class="card"><strong>Tiempo geológico</strong><p>Historia muy larga de la Tierra.</p></div></div><div class="callout">Las explicaciones científicas mejoran cuando observamos, comparamos y revisamos evidencias.</div>
+        <div class="mini-gallery">
+          <div class="mini-visual"><img src="html-img-07-1156f3498db1.png" alt="Rasgos, evidencia y ADN en una mesa de ciencias"><span class="caption">Comparar evidencias</span></div>
+          <div class="mini-visual"><img src="html-img-05-dd8132884a1e.png" alt="Observación de un insecto camuflado"><span class="caption">Observar con cuidado</span></div>
+        </div>
+      </article>
+      <article class="slide">
+        <div><h2>Lectura completada</h2><p>Terminaste la lectura interactiva. Ahora estás listo para pasar a la práctica guiada.</p><div class="feedback">Recuerda: si una idea fue difícil, vuelve a las diapositivas anteriores antes de continuar.</div></div>
+        <div style="text-align:center;position:relative"><img class="solo-owl" src="html-img-02-420c07e21b7c.png" alt="Owlaris"><div class="callout">¡Buen trabajo de investigador!</div></div>
+      </article>
+      <div class="controls">
+        <button class="navbtn" id="prev" type="button">‹ Anterior</button>
+        <div><div class="dots" id="dots"></div><div class="counter" id="counter"></div></div>
+        <button class="navbtn" id="next" type="button">Siguiente ›</button>
+      </div>
+    </section>
+  </main>
+  <script>
+    const slides=[...document.querySelectorAll('.slide')],prev=document.getElementById('prev'),next=document.getElementById('next'),dots=document.getElementById('dots'),counter=document.getElementById('counter');let current=0;
+    slides.forEach((_,i)=>{const d=document.createElement('span');d.className='dot';d.setAttribute('aria-label','Diapositiva '+(i+1));dots.appendChild(d)});
+    function show(i){current=Math.max(0,Math.min(i,slides.length-1));slides.forEach((s,n)=>s.classList.toggle('active',n===current));[...dots.children].forEach((d,n)=>d.classList.toggle('active',n===current));prev.disabled=current===0;next.disabled=current===slides.length-1;counter.textContent='Diapositiva '+(current+1)+' de '+slides.length}
+    prev.onclick=()=>show(current-1);next.onclick=()=>show(current+1);show(0);
+    function prepareFlipCards(){
+      document.querySelectorAll('.touch,.choice').forEach(card=>{
+        if(card.querySelector('.card-inner')) return;
+        const original=card.innerHTML;
+        let backText=card.dataset.flip || card.dataset.info || 'Toca para revisar esta idea.';
+        if(card.dataset.check){
+          backText=card.dataset.check==='ok'?'¡Correcto! Esta opción coincide con la idea de la lectura.':'Casi. Lee de nuevo la pista y vuelve a intentarlo.';
+        }
+        const inner=document.createElement('span');
+        inner.className='card-inner';
+        const front=document.createElement('span');
+        front.className='card-face card-front';
+        front.innerHTML=original;
+        const back=document.createElement('span');
+        back.className='card-face card-back';
+        back.textContent=backText;
+        inner.appendChild(front);
+        inner.appendChild(back);
+        card.innerHTML='';
+        card.appendChild(inner);
+        card.classList.add('flip-ready');
+      });
+    }
+    prepareFlipCards();
+    document.querySelectorAll('[data-info]').forEach(btn=>btn.onclick=()=>{document.querySelectorAll(`[data-target="${btn.dataset.target}"]`).forEach(b=>b.classList.remove('on','selected','flipped'));btn.classList.add(btn.classList.contains('choice')?'selected':'on','flipped');const target=document.getElementById(btn.dataset.target);if(target)target.textContent=btn.dataset.info});
+    document.querySelectorAll('[data-check]').forEach(btn=>btn.onclick=()=>{const box=document.getElementById(btn.dataset.box);box.textContent=btn.dataset.check==='ok'?'¡Correcto! Esa idea está bien clasificada.':'Casi. Vuelve a revisar la palabra clave y prueba otra vez.';document.querySelectorAll(`[data-box="${btn.dataset.box}"]`).forEach(b=>b.classList.remove('selected','flipped'));btn.classList.add('selected','flipped')});
+  </script>
+</body>
+</html>
